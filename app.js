@@ -48,7 +48,7 @@ app.get('/campgrounds',function(req,res){
     
 })
 
-app.post('/campgrounds',function(req,res){
+app.post('/campgrounds',isLoggedIn,function(req,res){
     let newCampground=new Object();
     newCampground.name= req.body.name
     newCampground.image=req.body.url
@@ -65,7 +65,7 @@ app.post('/campgrounds',function(req,res){
     
 })
 
-app.get('/campgrounds/new',function(req,res){
+app.get('/campgrounds/new',isLoggedIn,function(req,res){
     res.render('campgrounds/new')
 })
 
@@ -82,7 +82,7 @@ app.get('/campgrounds/:id',function(req,res){
 
 // comments routes
 
-app.get('/campgrounds/:id/comments/new',function(req,res){
+app.get('/campgrounds/:id/comments/new',isLoggedIn,function(req,res){
     Campground.findById(req.params.id,function(err,campground){
         if(err){
             console.log(err)
@@ -94,7 +94,7 @@ app.get('/campgrounds/:id/comments/new',function(req,res){
     
 })
 
-app.post('/campgrounds/:id/comments',function(req,res){
+app.post('/campgrounds/:id/comments',isLoggedIn,function(req,res){
     Campground.findById(req.params.id,function(err,campground){
         if(err){
             console.log(err)
@@ -115,6 +115,52 @@ app.post('/campgrounds/:id/comments',function(req,res){
     })
     
 })
+
+//auth routes
+//show register form
+
+app.get('/register',function(req,res){
+    res.render('register')
+})
+
+app.post('/register',function(req,res){
+const newUser=new User({username:req.body.username})
+   User.register(newUser,req.body.password,function(err,user){
+       if(err){
+           console.log(err);
+           return res.render('register')
+       }
+       else{
+           passport.authenticate('local')(req,res,function(){
+               res.redirect('/campgrounds')
+           })
+       }
+   })//hash is stored
+})
+
+//login routes
+app.get('/login',function(req,res){
+    res.render('login')
+})
+//(route,middleware,callback)
+app.post('/login',passport.authenticate('local',{
+    //middleware
+    successRedirect:'/campgrounds',
+    failureRedirect:'/login'
+    }),function(req,res){})
+
+
+app.get('/logout',function(req,res){
+    req.logout();
+    res.redirect('/campgrounds')
+})
+
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect('/login')
+}
 app.listen('3000',function(){
     console.log('server is running')
 })
