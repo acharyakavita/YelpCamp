@@ -58,7 +58,46 @@ router.get('/:id',function(req,res){
 
 
 //edit and update
-router.
+router.get('/:id/edit',function(req,res){
+    Campground.findById(req.params.id,function(err,foundCamp){
+        if(err){
+            console.log(err)
+            res.redirect('/campgrounds')
+        }
+        else{
+            res.render('campgrounds/edit',{campground:foundCamp})
+        }
+    })
+    
+})
+
+router.put('/:id',function(req,res){
+    let data={name:req.body.name,image:req.body.url,description:req.body.description}
+    Campground.findByIdAndUpdate(req.params.id,data,function(err,updatedCamp){
+        if(err){
+            console.log(err)
+            res.redirect('/campgrounds')
+        }
+        else{
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    })
+    
+})
+
+//destroy
+router.delete('/:id',function(req,res){
+    Campground.findByIdAndRemove(req.params.id,function(err){
+        if(err){
+            console.log(err)
+            res.redirect('/campgrounds')
+        }
+        else{
+            res.redirect("/campgrounds");
+        }
+    })
+    
+})
 
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){
