@@ -3,6 +3,7 @@ const passport=require('passport')
 const router=express.Router()
 const User=require('../models/user');
 
+
 router.get('/',function(req,res){
     res.render('landing')
 })
@@ -45,11 +46,5 @@ router.get('/logout',function(req,res){
     res.redirect('/campgrounds')
 })
 
-function isLoggedIn(req,res,next){
-    if(req.isAuthenticated()){
-        return next()
-    }
-    res.redirect('/login')
-}
 
 module.exports=router;
