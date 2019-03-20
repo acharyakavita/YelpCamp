@@ -7,6 +7,7 @@ const mongoose=require('mongoose');
 const passport=require('passport');
 const LocalStrategy=require('passport-local');
 const User=require('./models/user');
+const flash=require('connect-flash')
 
 const commentRoutes=require('./routes/comments');
 const campgroundRoutes=require('./routes/campgrounds');
@@ -19,12 +20,14 @@ app.use(bodyparser.urlencoded({extended:true}))
 app.set('view engine','ejs')
 app.use(express.static(__dirname+'/public'))
 app.use(methodOverride("_method"));
+app.use(flash())
 
 //passport configuration
 app.use(require('express-session')({
     secret:'hi',
     resave:false,
-    saveUninitialized:false
+    saveUninitialized:false,
+    cookie: { maxAge: 60000 }
 }))
 
 app.use(passport.initialize());
@@ -37,6 +40,8 @@ passport.deserializeUser(User.deserializeUser())
 //middleware to passe the user name in every route
 app.use(function(req,res,next){
     res.locals.currentUser=req.user
+    res.locals.error=req.flash('error')
+    res.locals.success=req.flash('success')
     next();
 })
 

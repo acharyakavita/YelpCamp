@@ -29,10 +29,12 @@ router.post('/',middleware.isLoggedIn,function(req,res){
     newCampground.author=author;
     Campground.create(newCampground,function(err,newCamp){
         if(err){
+            req.flash('error','Campground cannot be added')
             console.log(err)
         }
         else
-        {
+        {   
+            req.flash('success','New campground has been added')
             res.redirect('/campgrounds')
     }
     })
@@ -48,8 +50,9 @@ router.get('/new',middleware.isLoggedIn,function(req,res){
 //more info about campground
 router.get('/:id',function(req,res){
     Campground.findById(req.params.id).populate("comments").exec(function(err,foundCamp){
-        if(err){
-            console.log(err)
+        if(err || !foundCamp){
+            req.flash('error','Campground not found' )
+            res.redirect('back')
         }
         else{
             res.render('campgrounds/show',{campground:foundCamp})
@@ -63,6 +66,7 @@ router.get('/:id/edit',middleware.checkCampgroundOwnership,function(req,res){
     Campground.findById(req.params.id,function(err,foundCamp){
         if(err){
             console.log(err)
+            req.flash('error','Campground not found')
             res.redirect('/campgrounds')
         }
         else{
@@ -77,9 +81,11 @@ router.put('/:id',function(req,res){
     Campground.findByIdAndUpdate(req.params.id,data,function(err,updatedCamp){
         if(err){
             console.log(err)
+            req.flash('error','Campground edit failed')
             res.redirect('/campgrounds')
         }
         else{
+            req.flash('success','Campground edited')
             res.redirect("/campgrounds/" + req.params.id);
         }
     })
@@ -91,9 +97,11 @@ router.delete('/:id',middleware.checkCampgroundOwnership,function(req,res){
     Campground.findByIdAndRemove(req.params.id,function(err){
         if(err){
             console.log(err)
+            req.flash('success','Campground cannot be deleted')
             res.redirect('/campgrounds')
         }
         else{
+            req.flash('success','Campground deleted')
             res.redirect("/campgrounds");
         }
     })
