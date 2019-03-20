@@ -19,9 +19,13 @@ router.get('/',function(req,res){
 //post new campground
 router.post('/',isLoggedIn,function(req,res){
     let newCampground=new Object();
+    let author={}
     newCampground.name= req.body.name
     newCampground.image=req.body.url
     newCampground.description=req.body.description
+    author.id=req.user._id
+    author.username=req.user.username
+    newCampground.author=author;
     Campground.create(newCampground,function(err,newCamp){
         if(err){
             console.log(err)
@@ -52,6 +56,9 @@ router.get('/:id',function(req,res){
     });
 })
 
+
+//edit and update
+router.
 
 function isLoggedIn(req,res,next){
     if(req.isAuthenticated()){

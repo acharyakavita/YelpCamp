@@ -1,7 +1,8 @@
 const express=require('express');
 const app=express();
+const methodOverride=require('method-override');
 const bodyparser=require('body-parser');
-const seedDB=require('./seeds.js');
+//const seedDB=require('./seeds.js');
 const mongoose=require('mongoose');
 const passport=require('passport');
 const LocalStrategy=require('passport-local');
