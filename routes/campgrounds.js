@@ -15,6 +15,21 @@ var options = {
 var geocoder = NodeGeocoder(options);
 //campgrounds
 router.get('/',function(req,res){
+    if(req.query.search) {
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        // Get all campgrounds from DB
+        Campground.find({name: regex}, function(err, allCampgrounds){
+           if(err){
+               console.log(err);
+           } else {
+              if(allCampgrounds.length < 1) {
+                req.flash('error', 'Sorry, no campgrounds match your query. Please try again');
+                return res.redirect('/');
+              }
+              res.render("campgrounds/index",{campground:allCampgrounds,page: 'campgrounds'});
+           }
+        })
+    } else {
     Campground.find({},function(err,allCamps){
         if(err){
             console.log(err)
@@ -24,9 +39,12 @@ router.get('/',function(req,res){
             res.render('campgrounds/index',{campground:allCamps,page: 'campgrounds'})
         }
     })
-    
+}
 })
 
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 //post new campground
 router.post('/',middleware.isLoggedIn,function(req,res){
     let newCampground=new Object();
