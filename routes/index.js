@@ -11,7 +11,7 @@ router.get('/',function(req,res){
 //show register form
 
 router.get('/register',function(req,res){
-    res.render('register')
+    res.render('register',{page: 'register'})
 })
 
 router.post('/register',function(req,res){
@@ -19,8 +19,7 @@ const newUser=new User({username:req.body.username})
    User.register(newUser,req.body.password,function(err,user){
        if(err){
            console.log(err);
-           req.flash('error',err.message)
-           return res.render('register')
+           return res.render('register',{error:err.message})
        }
        else{
            passport.authenticate('local')(req,res,function(){
@@ -33,7 +32,7 @@ const newUser=new User({username:req.body.username})
 
 //login routes
 router.get('/login',function(req,res){
-    res.render('login')
+    res.render('login',{page: 'login'})
 })
 //(route,middleware,callback)
 router.post('/login',passport.authenticate('local',{

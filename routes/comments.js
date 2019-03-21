@@ -1,5 +1,4 @@
 const express=require('express')
-
 const router=express.Router({mergeParams:true})// to pass req.params.id
 const Campground=require('../models/campground');
 const Comment=require('../models/comment');

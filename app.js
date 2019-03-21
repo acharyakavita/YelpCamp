@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express=require('express');
 const app=express();
 const methodOverride=require('method-override');
@@ -12,6 +13,7 @@ const flash=require('connect-flash')
 const commentRoutes=require('./routes/comments');
 const campgroundRoutes=require('./routes/campgrounds');
 const authRoutes=require('./routes/index');
+app.locals.moment = require('moment');
 
 mongoose.connect('mongodb://localhost:27017/yelp_camp',{ useNewUrlParser: true });
 
