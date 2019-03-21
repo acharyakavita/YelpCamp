@@ -13,6 +13,30 @@ var options = {
 };
  
 var geocoder = NodeGeocoder(options);
+
+
+//image upload
+var multer = require('multer');
+var storage = multer.diskStorage({
+  filename: function(req, file, callback) {
+    callback(null, Date.now() + file.originalname);
+  }
+});
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+var upload = multer({ storage: storage, fileFilter: imageFilter})
+
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: 'drlhqwxlt', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 //campgrounds
 router.get('/',function(req,res){
     if(req.query.search) {
@@ -46,14 +70,12 @@ function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 //post new campground
-router.post('/',middleware.isLoggedIn,function(req,res){
+router.post('/',middleware.isLoggedIn,upload.single('image'),function(req,res){
     let newCampground=new Object();
     let author={}
     newCampground.name= req.body.name
     newCampground.price= req.body.price
-    newCampground.image=req.body.url
     newCampground.description=req.body.description
-
     author.id=req.user._id
     author.username=req.user.username
     newCampground.author=author;
@@ -70,7 +92,10 @@ router.post('/',middleware.isLoggedIn,function(req,res){
         newCampground.location=location
         newCampground.lat=lat
         newCampground.lng=lng
-    Campground.create(newCampground,function(err,newCamp){
+        cloudinary.v2.uploader.upload(req.file.path, function(err,result) {
+            // add cloudinary url for the image to the campground object under image property
+            newCampground.image=result.secure_url
+        Campground.create(newCampground,function(err,newCamp){
         if(err){
             req.flash('error','Campground cannot be added')
             console.log(err)
@@ -79,7 +104,8 @@ router.post('/',middleware.isLoggedIn,function(req,res){
         {   
             req.flash('success','New campground has been added')
             res.redirect('/campgrounds')
-    }
+         }
+        })
     })
 })  
 })

@@ -3,7 +3,7 @@
   <div class="row">
     <h1 style='text-align:center'>Create a New Campground</h1>
     <div style="width:30%;margin:25px auto ">
-      <form method="POST" action="/campgrounds">
+      <form method="POST" action="/campgrounds" enctype="multipart/form-data">
         <div class="form-group">
           <input
             class="form-control"
@@ -11,6 +11,10 @@
             name="name"
             placeholder="name"
           />
+        </div>
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
         </div>
         <div class="form-group">
             <input
@@ -26,14 +30,6 @@
               <label for="location">Location</label>
               <input class="form-control" type="text" name="location" id="location" placeholder="Yosemite National Park, CA">
           </div>
-        <div class="form-group">
-          <input
-            class="form-control"
-            type="text"
-            name="url"
-            placeholder="image url"
-          />
-        </div>
         <div class="form-group">
           <input
             class="form-control"
