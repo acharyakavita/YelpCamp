@@ -20,6 +20,16 @@ const campgroundSchema= new mongoose.Schema({
             ref:'User'
         },
         username:String
+    },
+    reviews: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review"
+        }
+    ],
+    rating: {
+        type: Number,
+        default: 0
     }
 })
 

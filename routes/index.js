@@ -3,9 +3,11 @@ const passport=require('passport')
 const router=express.Router()
 const User=require('../models/user');
 const Campground=require('../models/campground');
+const Notification=require('../models/notification');
 const async=require('async');
 var nodemailer=require('nodemailer');
 var crypto=require('crypto');
+var middleware=require('../middleware/index')
 
 router.get('/',function(req,res){
     res.render('landing')
@@ -18,7 +20,8 @@ router.get('/register',function(req,res){
 })
 
 router.post('/register',function(req,res){
-const newUser=new User({username:req.body.username,firstName:req.body.firstName,lastName:req.body.lastName,email:req.body.email,avatar:req.body.avatar})
+const newUser=new User({username:req.body.username,firstName:req.body.firstName,lastName:req.body.lastName,
+  email:req.body.email,avatar:req.body.avatar,aboutMe:req.body.aboutMe})
 if(req.body.adminCode === 'secretcode123') {
     newUser.isAdmin = true;
   }
@@ -57,25 +60,22 @@ router.get('/logout',function(req,res){
 })
 
 //profile
-router.get('/users/:id',function(req,res){
-    User.findById(req.params.id,function(err,foundUser){
-        if(err){
-            console.log(err);
-            req.flash('error','User not found')
-            res.redirect('/')
-        }
-        else{
-            Campground.find().where('author.id').equals(foundUser._id).exec(function(err,campgrounds){
-                if(err){
-                    console.log(err);
-                    req.flash('error','User not found')
-                    res.redirect('/')
-                }
-                res.render('users/show',{user:foundUser,campgrounds:campgrounds})
-            })
-            
-        }
-    })
+router.get('/users/:id',async function(req,res){
+  try{
+    let user = await User.findById(req.params.id).populate('followers').exec();
+    try{
+      let campgrounds = await Campground.find().where('author.id').equals(user._id).exec()
+      res.render('users/show',{user:user,campgrounds:campgrounds})
+    }
+    catch(err){
+      req.flash('error', err.message);
+      return res.redirect('back');
+    }
+  }
+  catch(err){
+    req.flash('error', err.message);
+    return res.redirect('back');
+  }
 })
 
 
@@ -197,4 +197,45 @@ router.get('/forgot', function(req, res) {
     });
   });
 
+  // follow user
+router.get('/follow/:id', middleware.isLoggedIn, async function(req, res) {
+  try {
+    let user = await User.findById(req.params.id);
+    user.followers.push(req.user._id);
+    user.save();
+    req.flash('success', 'Successfully followed ' + user.username + '!');
+    res.redirect('/users/' + req.params.id);
+  } catch(err) {
+    req.flash('error', err.message);
+    res.redirect('back');
+  }
+});
+
+// view all notifications
+router.get('/notifications', middleware.isLoggedIn, async function(req, res) {
+  try {
+    let user = await User.findById(req.user._id).populate({
+      path: 'notifications',
+      options: { sort: { "_id": -1 } }
+    }).exec();
+    let allNotifications = user.notifications;
+    res.render('notifications/index', { allNotifications });
+  } catch(err) {
+    req.flash('error', err.message);
+    res.redirect('back');
+  }
+});
+
+// handle notification
+router.get('/notifications/:id', middleware.isLoggedIn, async function(req, res) {
+  try {
+    let notification = await Notification.findById(req.params.id);
+    notification.isRead = true;
+    notification.save();
+    res.redirect(`/campgrounds/${notification.campgroundId}`);
+  } catch(err) {
+    req.flash('error', err.message);
+    res.redirect('back');
+  }
+}); 
 module.exports=router;

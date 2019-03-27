@@ -12,6 +12,7 @@ const flash=require('connect-flash')
 
 const commentRoutes=require('./routes/comments');
 const campgroundRoutes=require('./routes/campgrounds');
+const reviewRoutes= require('./routes/reviews');
 const authRoutes=require('./routes/index');
 app.locals.moment = require('moment');
 
@@ -40,8 +41,16 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 //middleware to passe the user name in every route
-app.use(function(req,res,next){
+app.use(async function(req,res,next){
     res.locals.currentUser=req.user
+    if(req.user) {
+        try {
+          let user = await User.findById(req.user._id).populate('notifications', null, { isRead: false }).exec();
+          res.locals.notifications = user.notifications.reverse();
+        } catch(err) {
+          console.log(err.message);
+        }
+       }
     res.locals.error=req.flash('error')
     res.locals.success=req.flash('success')
     next();
@@ -51,6 +60,7 @@ app.use(function(req,res,next){
 app.use(authRoutes);
 app.use('/campgrounds',campgroundRoutes);
 app.use('/campgrounds/:id/comments',commentRoutes);
+app.use('/campgrounds/:id/reviews',reviewRoutes);
 
 app.listen('3000',function(){
     console.log('server is running')
