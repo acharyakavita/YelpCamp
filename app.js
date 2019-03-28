@@ -15,6 +15,10 @@ const campgroundRoutes=require('./routes/campgrounds');
 const reviewRoutes= require('./routes/reviews');
 const authRoutes=require('./routes/index');
 app.locals.moment = require('moment');
+
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@yelpcamp-ev02f.mongodb.net/test?retryWrites=true`;
 //mongoose.connect('mongodb://localhost:27017/yelp_camp',{ useNewUrlParser: true });
 mongoose.connect(uri,{ useNewUrlParser: true });
@@ -30,8 +34,10 @@ app.use(require('express-session')({
     secret:'hi',
     resave:false,
     saveUninitialized:false,
+    store: new MongoStore(options),
     cookie: { maxAge: 60000 }
 }))
+
 
 app.use(passport.initialize());
 app.use(passport.session());
