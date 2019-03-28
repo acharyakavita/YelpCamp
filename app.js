@@ -24,7 +24,6 @@ const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@ye
 mongoose.connect(uri,{ useNewUrlParser: true });
 app.use(bodyparser.urlencoded({extended:true}))
 
-app.set('views', './views');
 app.set('view engine','ejs')
 var path = require ('path');
 var serveStatic = require('serve-static')
