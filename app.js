@@ -62,6 +62,8 @@ app.use('/campgrounds',campgroundRoutes);
 app.use('/campgrounds/:id/comments',commentRoutes);
 app.use('/campgrounds/:id/reviews',reviewRoutes);
 
-app.listen('3000',function(){
+var port = process.env.PORT || 8080;
+app.listen(port,function(){
+//app.listen('3000',function(){
     console.log('server is running')
 })
