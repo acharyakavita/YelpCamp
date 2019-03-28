@@ -63,7 +63,7 @@ app.use('/campgrounds/:id/comments',commentRoutes);
 app.use('/campgrounds/:id/reviews',reviewRoutes);
 
 var port = process.env.PORT || 8080;
-app.listen(port,function(){
+app.listen(port,process.env.IP,function(){
 //app.listen('3000',function(){
     console.log('server is running')
 })
