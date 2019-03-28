@@ -34,7 +34,7 @@ app.use(require('express-session')({
     secret:'hi',
     resave:false,
     saveUninitialized:false,
-    store: new MongoStore(options),
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
     cookie: { maxAge: 60000 }
 }))
 
