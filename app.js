@@ -26,7 +26,7 @@ app.use(bodyparser.urlencoded({extended:true}))
 
 app.set('view engine','ejs')
 var path = require ('path');
-app.use(express.static(path.join(__dirname+'.../public')))
+app.use('/static',express.static(path.join(__dirname+'public')))
 app.use(methodOverride("_method"));
 app.use(flash())
 
