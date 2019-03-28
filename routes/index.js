@@ -10,8 +10,13 @@ var crypto=require('crypto');
 var middleware=require('../middleware/index')
 
 router.get('/',function(req,res){
-  console.log('hello')
+  try{
     res.render('landing')
+  }
+  catch(e){
+    console.log(e)
+  }
+    
 })
 //auth routes
 //show register form
