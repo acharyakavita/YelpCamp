@@ -25,7 +25,7 @@ mongoose.connect(uri,{ useNewUrlParser: true });
 app.use(bodyparser.urlencoded({extended:true}))
 
 app.set('view engine','ejs')
-app.use(express.static(__dirname+'../public'))
+app.use(express.static(__dirname+'.../public'))
 app.use(methodOverride("_method"));
 app.use(flash())
 
