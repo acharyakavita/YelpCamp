@@ -15,9 +15,9 @@ const campgroundRoutes=require('./routes/campgrounds');
 const reviewRoutes= require('./routes/reviews');
 const authRoutes=require('./routes/index');
 app.locals.moment = require('moment');
-
-mongoose.connect('mongodb://localhost:27017/yelp_camp',{ useNewUrlParser: true });
-
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@yelpcamp-ev02f.mongodb.net/test?retryWrites=true`;
+//mongoose.connect('mongodb://localhost:27017/yelp_camp',{ useNewUrlParser: true });
+mongoose.connect(uri,{ useNewUrlParser: true });
 app.use(bodyparser.urlencoded({extended:true}))
 
 app.set('view engine','ejs')
