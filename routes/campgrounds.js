@@ -1,6 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const Campground=require('../models/campground');
+const Comment=require('../models/comment');
 const User=require('../models/user');
 const middleware=require('../middleware/index');
 var Notification = require("../models/notification");
