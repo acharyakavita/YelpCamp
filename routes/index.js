@@ -38,7 +38,7 @@ if(req.body.adminCode === 'secretcode123') {
        }
        else{
            passport.authenticate('local')(req,res,function(){
-            req.flash('success','Welcome to yelpCamp' + user.username)
+            req.flash('success','Welcome to yelpCamp ' + user.username)
                res.redirect('/campgrounds')
            })
        }
