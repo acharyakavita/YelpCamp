@@ -188,7 +188,6 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
           req.flash('error', 'Invalid address');
           return res.redirect('back');
         }
-        console.log(req.params.id)
        // delete req.body.campground.rating;
         Campground.findById(req.params.id, async function(err, campground){
             console.log(campground)
@@ -209,7 +208,6 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
                     return res.redirect("back");
                 }
               }
-            console.log('hi')
             campground.name = req.body.name;
             campground.description = req.body.description;
             campground.price=req.body.price;
@@ -218,6 +216,7 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
             campground.lng=data[0].longitude;
             campground.save();
             req.flash('success','Campground edited')
+            console.log("/campgrounds/" + req.params.id)
             res.redirect("/campgrounds/" + req.params.id);
         }
     })
