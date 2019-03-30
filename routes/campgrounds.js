@@ -188,9 +188,10 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
           req.flash('error', 'Invalid address');
           return res.redirect('back');
         }
+        console.log(req.params.id)
        // delete req.body.campground.rating;
         Campground.findById(req.params.id, async function(err, campground){
-        
+            console.log(campground)
         if(err){
             console.log(err)
             req.flash('error',err.message)
