@@ -183,8 +183,11 @@ router.get('/:id/edit',middleware.checkCampgroundOwnership,function(req,res){
 })
 
 router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),function(req,res){
+    console.log('inside put')
     geocoder.geocode(req.body.location, function (err, data) {
+        console.log('inside geocode')
         if (err || !data.length) {
+            console.log('inside geocode err')
           req.flash('error', 'Invalid address');
           return res.redirect('back');
         }
@@ -203,7 +206,9 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
                     var result = await cloudinary.v2.uploader.upload(req.file.path);
                     campground.imageId = result.public_id;
                     campground.image = result.secure_url;
+                    console.log('inside image')
                 } catch(err) {
+                    console.log('inside image err')
                     req.flash("error", err.message);
                     return res.redirect("back");
                 }
@@ -215,6 +220,7 @@ router.put('/:id',middleware.checkCampgroundOwnership,upload.single('image'),fun
             campground.lat=data[0].latitude;
             campground.lng=data[0].longitude;
             campground.save();
+            console.log('saved')
             req.flash('success','Campground edited')
             console.log("/campgrounds/" + req.params.id)
             res.redirect("/campgrounds/" + req.params.id);
