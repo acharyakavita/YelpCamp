@@ -38,7 +38,7 @@ if(req.body.adminCode === 'secretcode123') {
        }
        else{
            passport.authenticate('local')(req,res,function(){
-            req.flash('success','Welcome to yelpCamp ' + user.username)
+            req.flash('success','Welcome to Wander Nest ' + user.username)
                res.redirect('/campgrounds')
            })
        }
@@ -125,7 +125,7 @@ router.get('/forgot', function(req, res) {
         var mailOptions = {
           to: user.email,
           from: 'kavi120391@gmail.com',
-          subject: 'Yelp Camp Password Reset',
+          subject: 'Wander Nest Password Reset',
           text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
             'http://' + req.headers.host + '/reset/' + token + '\n\n' +
