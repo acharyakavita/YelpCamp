@@ -26,7 +26,7 @@ mongoose.connect(uri,{ useNewUrlParser: true });
 app.set('view engine','ejs')
 app.set('views', __dirname + '/Views');
 // use this to let express know it is on a encrypted connection
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   var schema = req.headers["x-forwarded-proto"];
 
   if (schema === "https") {
@@ -35,7 +35,7 @@ app.use(function(req, res, next) {
 
   next();
 });
-
+*/
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(express.static(__dirname + "/public"));
 
