@@ -33,6 +33,17 @@ app.set('views', __dirname + '/Views');
 app.use(methodOverride("_method"));
 app.use(flash())
 
+// use this to let express know it is on a encrypted connection
+app.use(function(req, res, next) {
+  var schema = req.headers["x-forwarded-proto"];
+
+  if (schema === "https") {
+    req.connection.encrypted = true;
+  }
+
+  next();
+});
+
 //passport configuration
 app.use(require('express-session')({
     secret:'hi',
