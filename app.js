@@ -22,17 +22,9 @@ const MongoStore = require('connect-mongo')(session);
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@yelpcamp-ev02f.mongodb.net/test?retryWrites=true`;
 //mongoose.connect('mongodb://localhost:27017/yelp_camp',{ useNewUrlParser: true });
 mongoose.connect(uri,{ useNewUrlParser: true });
-app.use(bodyparser.urlencoded({extended:true}))
-app.use(express.static(__dirname + "/public"));
-//app.engine('ejs', require('ejs').renderFile);
-app.set('view engine','ejs')
-//var path = require ('path');
-//var serveStatic = require('serve-static')
-//app.use(serveStatic(path.join(__dirname+'public')))
-app.set('views', __dirname + '/Views');
-app.use(methodOverride("_method"));
-app.use(flash())
 
+app.set('view engine','ejs')
+app.set('views', __dirname + '/Views');
 // use this to let express know it is on a encrypted connection
 app.use(function(req, res, next) {
   var schema = req.headers["x-forwarded-proto"];
@@ -43,6 +35,13 @@ app.use(function(req, res, next) {
 
   next();
 });
+
+app.use(bodyparser.urlencoded({extended:true}))
+app.use(express.static(__dirname + "/public"));
+
+app.use(methodOverride("_method"));
+app.use(flash())
+
 
 //passport configuration
 app.use(require('express-session')({
@@ -84,6 +83,7 @@ app.use('/campgrounds/:id/comments',commentRoutes);
 app.use('/campgrounds/:id/reviews',reviewRoutes);
 
 var port = process.env.PORT || 8080;
+console.log(process.env.PORT,process.env.IP,)
 app.listen(port,process.env.IP,function(){
 //app.listen('3000',function(){
     console.log('server is running')
